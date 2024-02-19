@@ -1,36 +1,81 @@
-import { Component } from "react";
+import { Component, useState } from "react";
 import "./App.css";
+import ExpenseForm from "./components/ExpenseForm";
+import ExpenseList from "./components/ExpenseList";
 
-export default class App extends Component {
-  render() {
-    return (
-      <main className="main-container">
-        <div className="sub-container">
-          <h1>장바구니</h1>
+const App = () => {
+  const [expense, setExpense] = useState([
+    { id: 1, charge: "콜라", amount: 2000 },
+    { id: 2, charge: "빵", amount: 1000 },
+    { id: 3, charge: "맥북", amount: 3000 },
+  ]);
 
-          <div
-            style={{ width: "100%", backgroundColor: "white", padding: "1rem" }}
-          >
-            {/* Expense Form */} Expense Form
-          </div>
+  const [charge, setCharge] = useState("");
+  const [amount, setAmount] = useState(0);
 
-          <div
-            style={{ width: "100%", backgroundColor: "white", padding: "1rem" }}
-          >
-            {/* Expense List */} Expense List
-          </div>
+  const handleCharge = (e) => {
+    setCharge(e.target.value);
+  };
 
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "start",
-              marginTop: "1rem",
-            }}
-          >
-            <p style={{ fontSize: "2rem" }}>총합계:</p>
-          </div>
+  const handleAmount = (e) => {
+    setAmount(e.target.valueAsNumber);
+  };
+
+  const handleDelete = (id) => {
+    const newExpense = expense.filter((expense) => expense.id !== id);
+    setExpense(newExpense);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (charge !== "" && amount > 0) {
+      const newExpense = { id: crypto.randomUUID(), charge, amount };
+      const newExpenses = [...expense, newExpense];
+      setExpense(newExpenses);
+      setCharge("");
+      setAmount(0);
+    } else {
+      console.log("Error");
+    }
+  };
+
+  return (
+    <main className="main-container">
+      <div className="sub-container">
+        <h1>장바구니</h1>
+
+        <div
+          style={{ width: "100%", backgroundColor: "white", padding: "1rem" }}
+        >
+          {/* Expense Form */}
+          <ExpenseForm
+            charge={charge}
+            handleCharge={handleCharge}
+            amount={amount}
+            handleAmount={handleAmount}
+            handleSubmit={handleSubmit}
+          />
         </div>
-      </main>
-    );
-  }
-}
+
+        <div
+          style={{ width: "100%", backgroundColor: "white", padding: "1rem" }}
+        >
+          {/* Expense List */}
+          <ExpenseList initialExpense={expense} handleDelete={handleDelete} />
+        </div>
+
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "start",
+            marginTop: "1rem",
+          }}
+        >
+          <p style={{ fontSize: "2rem" }}>총합계:</p>
+        </div>
+      </div>
+    </main>
+  );
+};
+
+export default App;
